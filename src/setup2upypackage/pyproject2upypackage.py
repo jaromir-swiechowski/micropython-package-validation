@@ -175,8 +175,10 @@ class Pyproject2uPyPackage(object):
         :returns:   Package dependencies
         :rtype:     List[str]
         """
-        if self._setup_data.get("dependencies", []):
-            return self._setup_data["dependencies"]
+
+        dependencies = self._setup_data.get('project', {}).get('dependencies', None)
+        if dependencies:
+            return dependencies
         else:
             self._logger.warning("No 'dependencies' key found in setup data dict")
             return []
@@ -192,9 +194,6 @@ class Pyproject2uPyPackage(object):
 
         if self._setup_data.get("project", []):
             return self._setup_data.get("project", [])["urls"]["Source"]
-
-        if self._setup_data.get("url", ""):
-            return self._setup_data["url"]
         else:
             self._logger.warning("No 'urls[Source]' key found in setup data dict")
             raise SystemExit("Project URL is mandatory")
@@ -247,8 +246,6 @@ class Pyproject2uPyPackage(object):
 
         all_files = []
         package_paths = self._find_packages()
-
-        print(package_paths)
 
         for info in package_paths.items():
             package = info[0]
