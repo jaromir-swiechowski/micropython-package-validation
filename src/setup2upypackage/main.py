@@ -21,6 +21,7 @@ from pathlib import Path
 from sys import stdout
 
 from .setup2upypackage import Setup2uPyPackage
+from .pyproject2upypackage import Pyproject2uPyPackage
 from .version import __version__
 
 
@@ -163,11 +164,21 @@ def main():
     ignore_deps = args.ignore_deps
     ignore_boot_main = args.ignore_boot_main
 
-    setup_2_upy_package = Setup2uPyPackage(
-        setup_file=setup_file,
-        package_file=package_file,
-        package_changelog_file=package_changelog_file,
-        logger=logger)
+    match setup_file.suffix:
+        case ".toml":
+            setup_2_upy_package = Pyproject2uPyPackage(
+                project_config_file=setup_file,
+                package_file=package_file,
+                package_changelog_file=package_changelog_file,
+                logger=logger,
+            )
+        case _:
+            setup_2_upy_package = Setup2uPyPackage(
+                setup_file=setup_file,
+                package_file=package_file,
+                package_changelog_file=package_changelog_file,
+                logger=logger,
+            )
 
     package_data = setup_2_upy_package.package_data
 
